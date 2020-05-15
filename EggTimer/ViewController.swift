@@ -10,23 +10,27 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
-    let hardnessTimes: [String: Int] = ["Soft": 300, "Medium": 420, "Hard": 720]
-    var secondsRemaining = 60
+    @IBOutlet weak var progressBar: UIProgressView!
+    
+    let hardnessTimes: [String: Int] = ["Soft": 3, "Medium": 5, "Hard": 7]
+    var totalTime = 0
+    var secondsPassed = 0
     var timer = Timer()
     
     @IBAction func hardnessSelected(_ sender: UIButton) {
         timer.invalidate()
         
         let hardness = sender.currentTitle!
-        secondsRemaining = hardnessTimes[hardness]!
+        totalTime = hardnessTimes[hardness]!
         
         timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: true)
     }
     
     @objc func updateTimer() {
-        if secondsRemaining > 0 {
-            titleLabel.text = "\(secondsRemaining) seconds left."
-            secondsRemaining -= 1
+        if secondsPassed <= totalTime {
+            titleLabel.text = "\(totalTime - secondsPassed) seconds left."
+            progressBar.progress = Float(secondsPassed) / Float(totalTime)
+            secondsPassed += 1
         } else {
             timer.invalidate()
             titleLabel.text = "Done!"
